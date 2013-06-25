@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <MageBase_DpsPaymentExpress>
+            <active>true</active>
+            <codePool>community</codePool>
+        </MageBase_DpsPaymentExpress>
+    </modules>
+</config>

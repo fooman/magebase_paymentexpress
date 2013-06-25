@@ -1,0 +1,38 @@
+<?php
+/**
+ * MageBase DPS Payment Express
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with Magento in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category    MageBase
+ * @package     MageBase_DpsPaymentExpress
+ * @author      Kristof Ringleff
+ * @copyright   Copyright (c) 2010 MageBase (http://www.magebase.com)
+ * @copyright   Copyright (c) 2010 Fooman Ltd (http://www.fooman.co.nz)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<?php $_logos = $this->getLogosToDisplay();?>
+<ul class="form-list" id="payment_form_<?php echo $this->getMethodCode() ?>" style="display:none;">
+    <li class="dps">
+        <div class="dps-text"><?php echo Mage::helper('magebasedps')->__('After clicking Place Order in the next step you will be redirected to the DPS Payment Express website.') ?></div>
+        <div class="dps-logos">
+        <img src="<?php echo $this->getSkinUrl('images/magebase/dps/dpspxlogo.png'); ?>" alt="" />
+        <?php if (count($_logos) > 0): ?>
+            <?php foreach($_logos as $_logo): ?>
+                <?php if ($_logo) : ?>
+                    <img src="<?php echo $this->getSkinUrl('images/magebase/dps/'.$_logo); ?>" alt="" />
+                <?php endif; ?>
+            <?php endforeach ?>
+        <?php endif;?>
+        </div>
+    </li>
+</ul>

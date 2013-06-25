@@ -1,0 +1,300 @@
+<?xml version="1.0"?>
+<config>
+   <sections>
+        <payment>
+            <groups>
+                <magebasedpspxpost translate="label" module="magebasedps">
+                    <label>DPS PxPost by MageBase</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>500</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </active>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+                        <cctypes translate="label">
+                            <label>Credit Card Types</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>adminhtml/system_config_source_payment_cctype</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                        </cctypes>
+                        <postusername translate="label">
+                            <label>PostUsername</label>
+                            <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </postusername>
+                        <postpassword translate="label">
+                            <label>PostPassword</label>
+                            <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </postpassword>
+                        <payment_action translate="label">
+                            <label>Payment Action</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>magebasedps/system_paymentAction</source_model>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </payment_action>
+                        <order_status translate="label">
+                            <label>New order status</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_order_status_processing</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </order_status>
+                        <display_logos translate="label">
+                            <label>Logos to display</label>
+                            <comment>Displayed during checkout.</comment>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>magebasedps/system_logos</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </display_logos>
+                        <allowspecific translate="label">
+                            <label>Payment from applicable countries</label>
+                            <frontend_type>allowspecific</frontend_type>
+                            <sort_order>50</sort_order>
+                            <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </allowspecific>
+                        <specificcountry translate="label">
+                            <label>Payment from Specific countries</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>51</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                        </specificcountry>
+                        <min_order_total translate="label">
+                            <label>Minimum Order Total</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>98</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </min_order_total>
+                        <max_order_total translate="label">
+                            <label>Maximum Order Total</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>99</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </max_order_total>
+                        <sort_order translate="label">
+                            <label>Sort order</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </sort_order>
+                        <debug translate="label">
+                            <label>Enable Logging/Debug</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <comment>Log all request and responses to the database</comment>
+                            <sort_order>510</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </debug>
+                    </fields>
+                </magebasedpspxpost>
+                <magebasedpspxpay translate="label" module="magebasedps">
+                    <label>DPS PxPay by MageBase</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>530</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </active>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+                        <pxpayuserid translate="label">
+                            <label>PxPayUserId</label>
+                            <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </pxpayuserid>
+                        <pxpaykey translate="label">
+                            <label>PxPayKey</label>
+                            <frontend_type>text</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </pxpaykey>
+                        <payment_action translate="label">
+                            <label>Payment Action</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>magebasedps/system_paymentAction</source_model>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </payment_action>
+                        <unpaid_order_status translate="label">
+                            <label>Unpaid order status</label>
+                            <frontend_type>select</frontend_type>
+                            <comment>Status before payment is received</comment>
+                            <source_model>magebasedps/system_pendingOrder</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </unpaid_order_status>
+                        <order_status translate="label">
+                            <label>New order status</label>
+                            <frontend_type>select</frontend_type>
+                            <comment>Status after receiving a positive response from DPS</comment>
+                            <source_model>adminhtml/system_config_source_order_status_processing</source_model>
+                            <sort_order>12</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </order_status>
+                        <display_logos translate="label">
+                            <label>Logos to display</label>
+                            <comment>Displayed during checkout.</comment>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>magebasedps/system_logos</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </display_logos>
+                        <allowspecific translate="label">
+                            <label>Payment from applicable countries</label>
+                            <frontend_type>allowspecific</frontend_type>
+                            <sort_order>50</sort_order>
+                            <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </allowspecific>
+                        <specificcountry translate="label">
+                            <label>Payment from Specific countries</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>51</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                        </specificcountry>
+                        <min_order_total translate="label">
+                            <label>Minimum Order Total</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>98</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </min_order_total>
+                        <max_order_total translate="label">
+                            <label>Maximum Order Total</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>99</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </max_order_total>
+                        <sort_order translate="label">
+                            <label>Sort order</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </sort_order>
+                         <emailstosend translate="label">
+                            <label>Emails to Send on Order</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>magebasedps/system_invoiceConfig</source_model>
+                            <sort_order>110</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </emailstosend>
+                        <debug translate="label">
+                            <label>Enable Logging/Debug</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <comment>Log all request and responses to the database</comment>
+                            <sort_order>2000</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </debug>
+                        <test_locally translate="label comment">
+                            <label>Enable functionality for local testing</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>2100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </test_locally>
+                    </fields>
+                </magebasedpspxpay>
+            </groups>
+        </payment>
+    </sections>
+</config>

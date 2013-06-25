@@ -1,0 +1,67 @@
+<?php
+/**
+ * MageBase DPS Payment Express
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with Magento in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category    MageBase
+ * @package     MageBase_DpsPaymentExpress
+ * @author      Kristof Ringleff
+ * @copyright   Copyright (c) 2010 MageBase (http://www.magebase.com)
+ * @copyright   Copyright (c) 2010 Fooman Ltd (http://www.fooman.co.nz)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<p><?php echo $this->getMethod()->getTitle() ?></p>
+<table width="100%"  border="0">
+    <tr><td width="45%" class="label"><?php echo $this->__('Card Type') ?></td><td><?php echo $this->getAdditionalData('CardName') ?></td>
+    <tr><td width="45%" class="label"><?php echo $this->__('Name on Card') ?></td><td><?php echo $this->getAdditionalData('CardHolderName') ?></td>
+    <tr><td width="45%" class="label"><?php echo $this->__('Amount Settled') ?></td><td><?php echo $this->getAdditionalData('AmountSettlement') ?></td>
+    <tr><td width="45%" class="label"><?php echo $this->__('Settlement Currency') ?></td><td><?php echo $this->getAdditionalData('CurrencySettlement') ?></td>
+    <?php if($this->wasThreeDSecure()): ?>
+        <tr><td width="45%" class="label">Transaction used 3D Secure</td><td><?php echo $this->__('Yes') ?><img style="margin-left:10px; vertical-align:middle" src="<?php echo $this->getSkinUrl('images/success_msg_icon.gif') ?>" alt="Transaction used 3D Secure" /></td></tr>
+    <?php endif; ?>
+</table>
+<?php $maxmindData = $this->getMaxmindData() ?>
+<?php if($maxmindData) :?>
+<?php $isFraud = $maxmindData['Suspected Fraud'] == 'Yes' ?>
+<div class="entry-edit">
+    <div style="<?php echo $isFraud?'background-color:red;':'background-color:green;' ?>" class="entry-edit-head collapseable <?php echo $isFraud?'open':'' ?>">
+        <a onclick="$$('.magebasedps_maxmind_details').invoke('toggle');this.toggleClassName('open'); return false;" href="#" class=""><?php echo $this->__('Fraud Details')?></a>
+    </div>
+</div>
+<table width="100%"  border="0">
+    <?php foreach ($maxmindData as $maxmindLabel=>$maxmindValue):?>
+    <?php if($maxmindLabel == 'Suspected Fraud'):?>
+        <tr><td width="45%" class="label"><?php echo $this->__($maxmindLabel) ?></td><td style="<?php echo $isFraud?'color:red;':'' ?>"><?php echo $maxmindValue ?> <?php echo $isFraud? '': '<img style="margin-left:10px; vertical-align:middle" src="'. $this->getSkinUrl('images/success_msg_icon.gif').'" alt="No Fraud Detected" /></td>'?>
+        <?php else: ?>
+        <tr class="magebasedps_maxmind_details" style="<?php echo $isFraud?'':'display:none;' ?>"><td width="45%" class="label"><?php echo $this->__($maxmindLabel) ?></td><td style="<?php echo $isFraud?'color:red;':'' ?>"><?php echo $maxmindValue ?></td>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</table>
+<?php endif; ?>
+<div class="entry-edit">
+    <div class="entry-edit-head collapseable">
+        <a onclick="$$('#magebasedps_txn_details').invoke('toggle');this.toggleClassName('open'); return false;" href="#" class=""><?php echo $this->__('Transaction Details')?></a>
+    </div>
+</div>
+<div id="magebasedps_txn_details" style="display:none;">
+    <table width="100%" border="0">
+        <tr><td width="45%" class="label"><?php echo $this->__('CardNumber') ?></td><td><?php echo $this->getAdditionalData('CardNumber') ?></td>
+        <tr><td width="45%" class="label"><?php echo $this->__('Authentication Code') ?></td><td><?php echo $this->getAdditionalData('AuthCode') ?></td>
+        <tr><td width="45%" class="label"><?php echo $this->__('Transaction Type') ?></td><td><?php echo $this->getAdditionalData('TxnType') ?></td>
+        <tr><td width="45%" class="label"><?php echo $this->__('Transaction Id') ?></td><td><?php echo $this->getAdditionalData('TxnId') ?></td>
+        <tr><td width="45%" class="label"><?php echo $this->__('DPS Transaction Reference') ?></td><td><?php echo $this->getAdditionalData('DpsTxnRef') ?></td>
+        <tr><td width="45%" class="label"><?php echo $this->__('Response Text') ?></td><td><?php echo $this->getAdditionalData('ResponseText') ?></td>
+        <tr><td width="45%" class="label"><?php echo $this->__('Cvc2 Result Code') ?></td><td><?php echo $this->getAdditionalData('Cvc2ResultCode') ?></td>
+    </table>
+</div>
+<br/>
