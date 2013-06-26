@@ -124,8 +124,11 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             ->setPaymentAction(MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_AUTHORIZE);
         $result = $this->buildRequestAndSubmitToDps() !== false;
         if ($result) {
+            $dpsTxnRef = Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef');
             $payment->setStatus(self::STATUS_APPROVED)
-                ->setLastTransId($this->getTransactionId());
+                ->setLastTransId($dpsTxnRef)
+                ->setTransactionId($dpsTxnRef);
+            $payment->registerAuthorizationNotification($amount);
         } else {
             $error = $this->getError();
             if (isset($error['message'])) {
@@ -162,8 +165,11 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
         $result = $this->buildRequestAndSubmitToDps() !== false;
 
         if ($result) {
+            $dpsTxnRef = Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef');
             $payment->setStatus(self::STATUS_APPROVED)
-                ->setLastTransId($this->getTransactionId());
+                ->setLastTransId($dpsTxnRef);
+            $payment->registerCaptureNotification($amount);
+
         } else {
             $error = $this->getError();
             if (isset($error['message'])) {
@@ -186,8 +192,11 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             ->setPaymentAction(MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_REFUND);
         $result = $this->buildRequestAndSubmitToDps() !== false;
         if ($result) {
+            $dpsTxnRef = Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef');
             $payment->setStatus(self::STATUS_APPROVED)
-                ->setLastTransId($this->getTransactionId());
+                ->setLastTransId($dpsTxnRef)
+                ->setTransactionId($dpsTxnRef);
+            $payment->registerRefundNotification($amount);
         } else {
             $error = $this->getError();
             if (isset($error['message'])) {
@@ -232,12 +241,18 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             $xml->addChild('Amount', trim(sprintf("%9.2f", $this->getAmount())));
             $xml->addChild('TxnType', $this->getPaymentAction());
             $xml->addChild('MerchantReference', $this->_getOrderId());
-            $xml->addChild('DpsTxnRef', Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef'));
-            $this->setTransactionId(Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef'));
+            $origDpsTxnRef = Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef');
+            $xml->addChild('DpsTxnRef', $origDpsTxnRef);
+            $txnId = substr(uniqid(rand()), 0, 16);
+            $this->setTransactionId($txnId);
+            $payment->setTransactionId($txnId);
+            $payment->setParentTransactionId($origDpsTxnRef);
+            $xml->addChild('TxnId', $txnId);
         } else {
             //authorise or purchase
             $txnId = substr(uniqid(rand()), 0, 16);
             $this->setTransactionId($txnId);
+            $payment->setTransactionId($txnId);
             $xml = new SimpleXMLElement('<Txn></Txn>');
             $xml->addChild('Amount', trim(sprintf("%9.2f", $this->getAmount())));
             $xml->addChild('CardHolderName', htmlspecialchars(trim($payment->getCcOwner()), ENT_QUOTES, 'UTF-8'));
@@ -284,8 +299,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
         if ($responseXml && $this->_validateResponse($responseXml)) {
             $this->unsError();
             //update payment information with last transaction unless we are refunding or completing
-            if ($this->getPaymentAction() != MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_COMPLETE
-                && $this->getPaymentAction() != MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_REFUND
+            if ($this->getPaymentAction() != MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_REFUND
             ) {
                 $this->setAdditionalData($responseXml, $payment);
             }

@@ -397,6 +397,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
             switch ($order->getState()) {
                 case Mage_Sales_Model_Order::STATE_NEW:
                 case Mage_Sales_Model_Order::STATE_PENDING_PAYMENT:
+                case 'payment_review': //Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW
                     if ((string)$resultXml->TxnType == MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_AUTHORIZE
                     ) {
                         Mage::log(
@@ -550,6 +551,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
             $order->sendNewOrderEmail();
             $order->setEmailSent(true);
         }
+        $order->setStatus(Mage::getStoreConfig('payment/' . $this->_code . '/order_status'));
         $order->save();
     }
 
