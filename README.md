@@ -18,7 +18,9 @@ For advanced functionality and security features, check out the commercial [Foom
 * Internet connectivity. The extension uses the fail-proof notification by DPS to get notified of received payments (full testing on localhost will not work).
 * Your php / server configurations must allow access to the $_GET variable when it contains very long strings (2000+ characters) - if your server disallows this, the extension will not work. Check with your hosting company if you're not sure.
 
-For the manual, questions and discussion around this extension please head over to this [magebase](http://magebase.com/magento-articles/updated-paymentexpress-extension-manual/) article.
+For the manual, questions and discussion around this extension please head over to this [magebase](http://magebase.com/magento-articles/updated-paymentexpress-extension-manual/) article. If you are enjoying the free Magebase DPS Payment Express extension, we would appreciate if you left a review on [Magento Connect](http://www.magentocommerce.com/magento-connect/MageBase/extension/3878/magebase_dpspaymentexpress).
+
+
    
    
 
