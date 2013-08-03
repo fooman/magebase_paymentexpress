@@ -20,11 +20,25 @@
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
+function createNewStatus($newOrderStatus)
+{
+    $status = Mage::getModel('sales/order_status')->load($newOrderStatus['status']);
+    if ($status->getStatus()) {
+        //skip existing
+        return;
+    }
+    $status = Mage::getModel('sales/order_status');
+    $status->setStatus($newOrderStatus['status']);
+    $status->setLabel($newOrderStatus['label']);
+    $status->save();
+    $status->assignState($newOrderStatus['state'], 0);
+}
+
 $installer = $this;
 /* @var $installer MageBase_DpsPaymentExpress_Model_Mysql4_Setup */
 
 $installer->startSetup();
-if(version_compare(Mage::getVersion(),'1.5.0.0','>=')){
+if (version_compare(Mage::getVersion(), '1.5.0.0', '>=')) {
     $newOrderStatusses =  array();
     $newOrderStatusses[] =  array(
         'status'=> 'pending_dps',
@@ -43,16 +57,7 @@ if(version_compare(Mage::getVersion(),'1.5.0.0','>=')){
     );
 
     foreach ($newOrderStatusses as $newOrderStatus) {
-        $status = Mage::getModel('sales/order_status')->load($newOrderStatus['status']);
-        if($status->getStatus()) {
-            //skip existing
-            continue;
-        }
-        $status = Mage::getModel('sales/order_status');
-        $status->setStatus($newOrderStatus['status']);
-        $status->setLabel($newOrderStatus['label']);
-        $status->save();
-        $status->assignState($newOrderStatus['state'], 0);
+        createNewStatus($newOrderStatus);
     }
 }
 $installer->endSetup();

@@ -161,6 +161,11 @@
     <?php foreach($_logos as $_logo): ?>
         <img src="<?php echo $this->getSkinUrl('images/magebase/dps/'.$_logo); ?>" alt="" />
     <?php endforeach ?>
+
+    <a href="http://www.paymentexpress.com/About/About_DPS/Privacy_Policy" target="_blank">
+        <img src="<?php echo $this->getSkinUrl('images/magebase/dps/dpspxlogo.png'); ?>" alt="DPS"/><br/>
+        <small>DPS <?php echo $this->__('Privacy Policy') ?></small>
+    </a>
 </li>
 <?php endif;?>
 </ul>

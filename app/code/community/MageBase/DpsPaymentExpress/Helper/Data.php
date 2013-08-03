@@ -64,7 +64,9 @@ class MageBase_DpsPaymentExpress_Helper_Data extends Mage_Core_Helper_Abstract
         ) {
             return $info->getAdditionalInformation($key);
         }
-        if ($info->getAdditionalData()) {
+        //We make the following check since we may get string "Array" in additional_data field. Seems like it happens
+        //by default if additional_data is not set. This should be investigated but for now this is a solution.
+        if ($info->getAdditionalData() && strpos($info->getAdditionalData(), 'Array') !== 0) {
             $data = unserialize($info->getAdditionalData());
         }
         if (!empty($key) && isset($data[$key])) {

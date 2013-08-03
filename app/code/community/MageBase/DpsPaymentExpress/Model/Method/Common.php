@@ -85,9 +85,21 @@ class MageBase_DpsPaymentExpress_Model_Method_Common extends Mage_Payment_Model_
             'NP' => 'PXPay Closing Request tag not found.',
             'NQ' => 'User not enabled for PxPay. Contact DPS.',
             'NT' => 'Key is not 64 characters.',
-            'U5' => 'The transaction was Declined.',
+            'U5' => 'Invalid User / Password',
             'QD' => 'The transaction was Declined.', //Invalid TxnRef
             'Q4' => 'Invalid Amount Entered. Transaction has not been Approved',
+            'Q8' => 'Invalid Currency',
+            'QG' => 'Invalid TxnType',
+            'QI' => 'Invalid Expiry Date (month not between 1-12)',
+            'QJ' => 'Invalid Expiry Date (non numeric value submitted)',
+            'QK' => 'Invalid Card Number Length',
+            'QL' => 'Invalid Card Number',
+            'JC' => 'Invalid BillingId',
+            'JD' => 'Invalid DPSBillingId',
+            'JE' => 'DPSBillingId not matched',
+            'D2' => 'Invalid username',
+            'D3' => 'Invalid / missing Password',
+            'D4' => 'Maximum number of logon attempts exceeded'
         );
 
 

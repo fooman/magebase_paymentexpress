@@ -378,7 +378,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
                 Mage::log("Error in DPS Response Validation: No Order", null, self::DPS_LOG_FILENAME);
                 return MageBase_DpsPaymentExpress_Model_Method_Common::STATUS_ERROR;
             }
-            if (abs((float)$resultXml->AmountSettlement - $order->getBaseGrandTotal()) > 0.0005) {
+            if (abs((float)$resultXml->AmountSettlement - $order->getBaseGrandTotal()) > 0.05) {
                 Mage::log(
                     $order->getIncrementId() . " Error in DPS Response Validation: Mismatched totals",
                     null,
@@ -518,10 +518,6 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
     protected function _sendEmails($order, $invoice)
     {
         switch (Mage::getStoreConfig('payment/' . $this->_code . '/emailstosend', $this->getStore())) {
-            case MageBase_DpsPaymentExpress_Model_Method_Common::EMAIL_SEND_ORDER: // default - send order emails only
-                $order->sendNewOrderEmail();
-                $order->setEmailSent(true);
-                break;
             case MageBase_DpsPaymentExpress_Model_Method_Common::EMAIL_SEND_INVOICE: // send invoice email only
                 $invoice->save();
                 $invoice->sendEmail();
@@ -533,6 +529,11 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
                 $invoice->save();
                 $invoice->sendEmail();
                 $invoice->setEmailSent(true);
+                break;
+            case MageBase_DpsPaymentExpress_Model_Method_Common::EMAIL_SEND_ORDER: // default - send order email only
+            default:
+                $order->sendNewOrderEmail();
+                $order->setEmailSent(true);
                 break;
         }
     }
@@ -564,17 +565,18 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
     {
         if ($responseXml) {
             $order = $this->_getOrder($responseXml);
-            $this->setAdditionalData($responseXml, $order->getPayment());
+            if ($order) {
+                $this->setAdditionalData($responseXml, $order->getPayment());
+            }
         } else {
             $order = Mage::getModel('sales/order')->load(Mage::getSingleton('checkout/session')->getLastOrderId());
         }
-        if ($order->getId() && $order->getState() != Mage_Sales_Model_Order::STATE_CANCELED) {
+        if ($order && $order->getId() && $order->getState() != Mage_Sales_Model_Order::STATE_CANCELED) {
             $order->registerCancellation(
                 Mage::helper('magebasedps')->__(
                     'There has been an error processing your payment. Please try later or contact us for help.'
                 ), false
-            )
-                ->save();
+            )->save();
         }
     }
 
