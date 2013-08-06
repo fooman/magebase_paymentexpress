@@ -378,7 +378,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
                 Mage::log("Error in DPS Response Validation: No Order", null, self::DPS_LOG_FILENAME);
                 return MageBase_DpsPaymentExpress_Model_Method_Common::STATUS_ERROR;
             }
-            if (abs((float)$resultXml->AmountSettlement - $order->getBaseGrandTotal()) > 0.05) {
+            if (abs((float)$resultXml->AmountSettlement - sprintf("%9.2f",$order->getBaseGrandTotal())) > 0.05) {
                 Mage::log(
                     $order->getIncrementId() . " Error in DPS Response Validation: Mismatched totals",
                     null,

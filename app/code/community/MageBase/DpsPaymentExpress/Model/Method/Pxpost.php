@@ -417,7 +417,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
                 if ($this->getPaymentAction() != MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_COMPLETE
                     && $this->getPaymentAction() != MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_REFUND
                 ) {
-                    if (abs((float)$resultXml->Transaction[0]->Amount - $order->getBaseGrandTotal()) > 0.0005) {
+                    if (abs((float)$resultXml->Transaction[0]->Amount - sprintf("%9.2f", $order->getBaseGrandTotal())) > 0.0005) {
                         Mage::log("Error in DPS Response Validation: Mismatched totals", null, self::DPS_LOG_FILENAME);
                         return false;
                     }
