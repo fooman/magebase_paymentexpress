@@ -23,7 +23,7 @@
 function createNewStatus($newOrderStatus)
 {
     $status = Mage::getModel('sales/order_status')->load($newOrderStatus['status']);
-    if ($status->getStatus()) {
+    if ($status->getId()) {
         //skip existing
         return;
     }

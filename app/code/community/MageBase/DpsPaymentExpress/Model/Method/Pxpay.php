@@ -600,4 +600,17 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
         return Mage::getStoreConfig('payment/' . $this->_code . '/debug', $this->getStore());
     }
 
+    /**
+     * Can be used in regular checkout
+     *
+     * @return bool
+     */
+    public function canUseCheckout()
+    {
+        $this->_canUseCheckout = Mage::getStoreConfigFlag(
+            'payment/' . $this->_code . '/frontend_checkout', $this->getStore()
+        );
+        return $this->_canUseCheckout;
+    }
+
 }

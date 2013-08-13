@@ -128,7 +128,6 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             $payment->setStatus(self::STATUS_APPROVED)
                 ->setLastTransId($dpsTxnRef)
                 ->setTransactionId($dpsTxnRef);
-            $payment->registerAuthorizationNotification($amount);
         } else {
             $error = $this->getError();
             if (isset($error['message'])) {
@@ -168,7 +167,6 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             $dpsTxnRef = Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef');
             $payment->setStatus(self::STATUS_APPROVED)
                 ->setLastTransId($dpsTxnRef);
-            $payment->registerCaptureNotification($amount);
 
         } else {
             $error = $this->getError();
@@ -196,7 +194,6 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             $payment->setStatus(self::STATUS_APPROVED)
                 ->setLastTransId($dpsTxnRef)
                 ->setTransactionId($dpsTxnRef);
-            $payment->registerRefundNotification($amount);
         } else {
             $error = $this->getError();
             if (isset($error['message'])) {
@@ -588,4 +585,16 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
         return $store;
     }
 
+    /**
+     * Can be used in regular checkout
+     *
+     * @return bool
+     */
+    public function canUseCheckout()
+    {
+        $this->_canUseCheckout = Mage::getStoreConfigFlag(
+            'payment/' . $this->_code . '/frontend_checkout', $this->getStore()
+        );
+        return $this->_canUseCheckout;
+    }
 }
