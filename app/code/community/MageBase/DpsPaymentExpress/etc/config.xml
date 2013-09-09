@@ -14,7 +14,9 @@
             <magebasedps_mysql4>
                 <class>MageBase_DpsPaymentExpress_Model_Mysql4</class>
                 <entities>
-                    <debug><table>magebasedps_debug</table></debug>
+                    <debug>
+                        <table>magebasedps_debug</table>
+                    </debug>
                 </entities>
             </magebasedps_mysql4>
         </models>
@@ -60,6 +62,16 @@
                 </types>
             </cc>
         </payment>
+        <events>
+            <sales_order_payment_place_end>
+                <observers>
+                    <magebase_dpspaymentexpress>
+                        <class>magebasedps/observer</class>
+                        <method>setOrderPaymentPreviewState</method>
+                    </magebase_dpspaymentexpress>
+                </observers>
+            </sales_order_payment_place_end>
+        </events>
     </global>
     <frontend>
         <events>
@@ -108,6 +120,7 @@
                 <max_order_total>0</max_order_total>
                 <sort_order>1213</sort_order>
                 <debug>0</debug>
+                <cvv2_not_matched_state>payment_review</cvv2_not_matched_state>
             </magebasedpspxpost>
             <magebasedpspxpay>
                 <active>0</active>
