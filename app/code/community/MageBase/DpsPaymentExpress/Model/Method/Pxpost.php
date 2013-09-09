@@ -405,29 +405,38 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
                         $this->setError(array('message' => $resultXml->HelpText));
                     }
                     return false;
-                }
-                $order = $this->_getOrder();
-                if (!$order) {
-                    Mage::log("Error in DPS Response Validation: No Order", null, self::DPS_LOG_FILENAME);
-                    return false;
-                }
-                if ($this->getPaymentAction() != MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_COMPLETE
-                    && $this->getPaymentAction() != MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_REFUND
-                ) {
-                    if (abs((float)$resultXml->Transaction[0]->Amount - sprintf("%9.2f", $order->getBaseGrandTotal())) > 0.0005) {
-                        Mage::log("Error in DPS Response Validation: Mismatched totals", null, self::DPS_LOG_FILENAME);
+                } else {
+                    $order = $this->_getOrder();
+                    if (!$order) {
+                        Mage::log("Error in DPS Response Validation: No Order", null, self::DPS_LOG_FILENAME);
                         return false;
                     }
+                    // If we get a success = 1 , then an order should be always created.
+                    // The message just goes to the order comments
+                    $message = false;
+                    if ($this->getPaymentAction() != MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_COMPLETE
+                        && $this->getPaymentAction() != MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_REFUND
+                        && abs((float)$resultXml->Transaction[0]->Amount - sprintf("%9.2f", $order->getBaseGrandTotal())) > 0.0005
+                    ) {
+                        $message = 'Error in DPS Response Validation: Mismatched totals';
+
+                    } elseif ((float)$resultXml->Transaction[0]->CurrencySettlement != $order->getBaseCurrencyCode()) {
+                        $message = 'Error in DPS Response Validation: Mismatched currencies';
+
+                    } elseif ((string)$resultXml->Transaction[0]->Cvc2ResultCode == 'N'
+                        || (string)$resultXml->Transaction[0]->Cvc2ResultCode == 'S'
+                    ) {
+                        $message = 'Error in DPS Response Validation: Mismatched CVC';
+                    }
+                    if ($message) {
+                        $state = $this->getConfigData('cvv2_not_matched_state', $order->getStoreId());
+                        $order->addStatusHistoryComment($message, $state);
+                        Mage::log($message, null, self::DPS_LOG_FILENAME);
+                        $order->setPaymentPreviewState($state);
+                    }
+
+                    return true;
                 }
-                if ((float)$resultXml->Transaction[0]->CurrencySettlement != $order->getBaseCurrencyCode()) {
-                    Mage::log("Error in DPS Response Validation: Mismatched currencies", null, self::DPS_LOG_FILENAME);
-                    return false;
-                }
-                if ((string)$resultXml->Transaction[0]->Cvc2ResultCode == 'N') {
-                    Mage::log("Error in DPS Response Validation: Mismatched CVC", null, self::DPS_LOG_FILENAME);
-                    return false;
-                }
-                return true;
             } else {
                 Mage::log("Error in DPS Response Validation: Not a valid response.", null, self::DPS_LOG_FILENAME);
                 return false;

@@ -9,7 +9,13 @@ class MageBase_DpsPaymentExpress_Model_Observer
             $result->setShouldProceed(false);
         }
     }
+
+    public function setOrderPaymentPreviewState($observer)
+    {
+        $order = $observer->getPayment()->getOrder();
+        if ($order->getPaymentPreviewState()) {
+            $state = $order->getPaymentPreviewState();
+            $order->setStatus($state);
+        }
+    }
 }
-
-
-
