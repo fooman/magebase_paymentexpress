@@ -2,7 +2,7 @@
 <config>
     <modules>
         <MageBase_DpsPaymentExpress>
-            <version>1.5.6</version>
+            <version>1.5.7</version>
         </MageBase_DpsPaymentExpress>
     </modules>
     <global>
@@ -60,6 +60,18 @@
                 </types>
             </cc>
         </payment>
+        <events>
+            <controller_front_init_before>
+                <observers>
+                    <magebasedpsDynamicRewrite>
+                        <!-- on Magento pre 1.5.0.0 adds order statuses -->
+                        <type>model</type>
+                        <class>MageBase_DpsPaymentExpress_Model_Observer</class>
+                        <method>addMageOneFourConfig</method>
+                    </magebasedpsDynamicRewrite>
+                </observers>
+            </controller_front_init_before>
+        </events>
     </global>
     <frontend>
         <events>

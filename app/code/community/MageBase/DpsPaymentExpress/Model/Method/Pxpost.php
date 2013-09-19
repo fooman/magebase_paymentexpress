@@ -166,8 +166,8 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
         if ($result) {
             $dpsTxnRef = Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef');
             $payment->setStatus(self::STATUS_APPROVED)
-                ->setLastTransId($dpsTxnRef);
-
+                ->setLastTransId($dpsTxnRef)
+                ->setTransactionId($dpsTxnRef);
         } else {
             $error = $this->getError();
             if (isset($error['message'])) {

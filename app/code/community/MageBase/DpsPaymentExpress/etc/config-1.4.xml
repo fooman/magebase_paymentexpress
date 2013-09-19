@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<config>
+    <global>
+        <sales>
+            <order>
+                <statuses>
+                    <pending_dps translate="label">
+                        <label>Pending Payment (DPS)</label>
+                    </pending_dps>
+                    <processing_dps_auth translate="label">
+                        <label>Processing (DPS - Amount authorised)</label>
+                    </processing_dps_auth>
+                    <processing_dps_paid translate="label">
+                        <label>Processing (DPS - Amount paid)</label>
+                    </processing_dps_paid>
+                </statuses>
+                <states>
+                    <pending_payment>
+                        <statuses>
+                            <pending_dps/>
+                        </statuses>
+                    </pending_payment>
+                    <processing>
+                        <statuses>
+                            <processing_dps_auth/>
+                            <processing_dps_paid/>
+                        </statuses>
+                    </processing>
+                </states>
+            </order>
+        </sales>
+    </global>
+</config>
