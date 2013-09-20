@@ -485,6 +485,9 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
             'ResponseText'       => (string)$responseXml->ResponseText,
             'Cvc2ResultCode'     => (string)$responseXml->Cvc2ResultCode
         );
+        $expiry = (string)$responseXml->DateExpiry;
+        $payment->setCcExpMonth(substr($expiry, 0, 2));
+        $payment->setCcExpYear(2000 + (int)substr($expiry, -2));
         $payment->setAdditionalData(serialize($data));
     }
 
