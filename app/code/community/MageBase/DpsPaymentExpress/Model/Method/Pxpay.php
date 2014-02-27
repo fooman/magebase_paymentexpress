@@ -137,18 +137,17 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
     /**
      * Return redirect url to DPS after order has been placed
      *
+     * @throws Exception
      * @return string
      */
     public function getOrderPlaceRedirectUrl()
     {
         if (!$this->_isActive()) {
             throw new Exception("Payment method is not available.");
-            return false;
         }
         $url = $this->_getPxPayUrl();
         if (!$url) {
             throw new Exception("Payment method is not available.");
-            return false;
         }
         return $url;
     }
@@ -488,7 +487,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
         $expiry = (string)$responseXml->DateExpiry;
         $payment->setCcExpMonth(substr($expiry, 0, 2));
         $payment->setCcExpYear(2000 + (int)substr($expiry, -2));
-        $payment->setAdditionalData(serialize($data));
+        Mage::helper('magebasedps')->setAdditionalData($payment, $data);
     }
 
     /**
@@ -507,6 +506,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
         $payment->registerCaptureNotification((string)$responseXml->AmountSettlement);
         $invoice = $payment->getCreatedInvoice();
         $order->setStatus(Mage::getStoreConfig('payment/' . $this->_code . '/order_status', $this->getStore()));
+        $order->save();
         $this->_sendEmails($order, $invoice);
         $order->save();
     }
@@ -522,14 +522,12 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
     {
         switch (Mage::getStoreConfig('payment/' . $this->_code . '/emailstosend', $this->getStore())) {
             case MageBase_DpsPaymentExpress_Model_Method_Common::EMAIL_SEND_INVOICE: // send invoice email only
-                $invoice->save();
                 $invoice->sendEmail();
                 $invoice->setEmailSent(true);
                 break;
             case MageBase_DpsPaymentExpress_Model_Method_Common::EMAIL_SEND_BOTH: // send both
                 $order->sendNewOrderEmail();
                 $order->setEmailSent(true);
-                $invoice->save();
                 $invoice->sendEmail();
                 $invoice->setEmailSent(true);
                 break;
@@ -550,12 +548,14 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
     {
         $order = $this->_getOrder($responseXml);
         $payment = $order->getPayment();
+        $payment->setIsTransactionClosed(0);
         $this->setAdditionalData($responseXml, $payment);
+        $order->setStatus(Mage::getStoreConfig('payment/' . $this->_code . '/order_status'));
+        $order->save();
         if (!$order->getEmailSent()) {
             $order->sendNewOrderEmail();
             $order->setEmailSent(true);
         }
-        $order->setStatus(Mage::getStoreConfig('payment/' . $this->_code . '/order_status'));
         $order->save();
     }
 

@@ -157,8 +157,10 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             ->setPayment($payment);
         if (Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef')) {
             $this->setPaymentAction(MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_COMPLETE);
+            $complete = true;
         } else {
             $this->setPaymentAction(MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_PURCHASE);
+            $complete = false;
         }
 
         $result = $this->buildRequestAndSubmitToDps() !== false;
@@ -168,6 +170,11 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             $payment->setStatus(self::STATUS_APPROVED)
                 ->setLastTransId($dpsTxnRef)
                 ->setTransactionId($dpsTxnRef);
+            if ($complete) {
+                $amount = Mage::helper('magebasedps')->getAdditionalData($payment, 'Amount');
+                //using registerCaptureNotification creates a transaction record but unfortunately doubles up Total Paid
+                //$payment->registerCaptureNotification($amount);
+            }
         } else {
             $error = $this->getError();
             if (isset($error['message'])) {
@@ -242,14 +249,15 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             $xml->addChild('DpsTxnRef', $origDpsTxnRef);
             $txnId = substr(uniqid(rand()), 0, 16);
             $this->setTransactionId($txnId);
-            $payment->setTransactionId($txnId);
-            $payment->setParentTransactionId($origDpsTxnRef);
             $xml->addChild('TxnId', $txnId);
         } else {
             //authorise or purchase
             $txnId = substr(uniqid(rand()), 0, 16);
             $this->setTransactionId($txnId);
             $payment->setTransactionId($txnId);
+            if (MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_AUTHORIZE == $this->getPaymentAction()) {
+                $payment->setIsTransactionClosed(0);
+            }
             $xml = new SimpleXMLElement('<Txn></Txn>');
             $xml->addChild('Amount', trim(sprintf("%9.2f", $this->getAmount())));
             $xml->addChild('CardHolderName', htmlspecialchars(trim($payment->getCcOwner()), ENT_QUOTES, 'UTF-8'));
@@ -481,7 +489,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             'AcquirerTxnRef' => (string)$responseXml->Transaction[0]->AcquirerTxnRef,
             'Cvc2ResultCode' => (string)$responseXml->Transaction[0]->Cvc2ResultCode
         );
-        $payment->setAdditionalData(serialize($data));
+        Mage::helper('magebasedps')->setAdditionalData($payment, $data);
     }
 
     public function OtherCcType($type)
@@ -506,13 +514,11 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
         $info = $this->getInfoInstance();
 
         if ($this->_isPlaceOrder()) {
-            $info->getOrder()->getCustomerId();
             return $info->getOrder()->getIncrementId();
         } else {
             if (!$info->getQuote()->getReservedOrderId()) {
                 $info->getQuote()->reserveOrderId();
             }
-            $info->getQuote()->getCustomerId();
             return $info->getQuote()->getReservedOrderId();
         }
     }

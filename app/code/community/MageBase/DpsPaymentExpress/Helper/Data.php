@@ -76,6 +76,30 @@ class MageBase_DpsPaymentExpress_Helper_Data extends Mage_Core_Helper_Abstract
         }
     }
 
+    public function setAdditionalData($info, $data, $key = null)
+    {
+        if (method_exists($info, 'setAdditionalInformation')) {
+            if (is_array($data)) {
+                foreach ($data as $key => $value) {
+                    $info->setAdditionalInformation($key, $value);
+                }
+            } elseif (!is_null($key)) {
+                $info->setAdditionalInformation($key, $data);
+            }
+        }
+        if (is_array($data)) {
+            $info->setAdditionalData(serialize($data));
+        } elseif (!is_null($key)) {
+            if ($info->getAdditionalData()) {
+                $existingData = unserialize($info->getAdditionalData());
+            } else {
+                $existingData = array();
+            }
+            $existingData[$key] = $data;
+            $info->setAdditionalData(serialize($existingData));
+        }
+    }
+
     public function wasThreeDSecure($info)
     {
         if ($this->getAdditionalData($info, 'centinel_mpivendor') == 'Y') {

@@ -62,7 +62,7 @@ class MageBase_DpsPaymentExpress_PxpayController extends Mage_Core_Controller_Fr
                     $resultXml = $this->_getRealResponse($this->getRequest()->getParam('result'));
                 }
 
-                //we have a reponse from DPS
+                //we have a response from DPS
                 if ($resultXml) {
                     if ((int)$resultXml->Success == 1) {
                         $session->setLastQuoteId((int)$resultXml->TxnData2)

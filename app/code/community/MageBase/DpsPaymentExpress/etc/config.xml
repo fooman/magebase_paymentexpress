@@ -2,7 +2,7 @@
 <config>
     <modules>
         <MageBase_DpsPaymentExpress>
-            <version>1.5.8</version>
+            <version>1.5.9</version>
         </MageBase_DpsPaymentExpress>
     </modules>
     <global>
@@ -137,7 +137,7 @@
                 <max_order_total>0</max_order_total>
                 <sort_order>1216</sort_order>
                 <debug>0</debug>
-                <emailstosend>0</emailstosend>
+                <emailstosend>send_order</emailstosend>
                 <test_locally>0</test_locally>
             </magebasedpspxpay>
         </payment>
