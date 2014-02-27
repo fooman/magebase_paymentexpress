@@ -199,8 +199,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
         if ($result) {
             $dpsTxnRef = Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef');
             $payment->setStatus(self::STATUS_APPROVED)
-                ->setLastTransId($dpsTxnRef)
-                ->setTransactionId($dpsTxnRef);
+                ->setLastTransId($dpsTxnRef);
         } else {
             $error = $this->getError();
             if (isset($error['message'])) {
@@ -254,7 +253,6 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             //authorise or purchase
             $txnId = substr(uniqid(rand()), 0, 16);
             $this->setTransactionId($txnId);
-            $payment->setTransactionId($txnId);
             if (MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_AUTHORIZE == $this->getPaymentAction()) {
                 $payment->setIsTransactionClosed(0);
             }
