@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MageBase DPS Payment Express
  *
@@ -20,7 +21,6 @@
  * @copyright   Copyright (c) 2010 Fooman Ltd (http://www.fooman.co.nz)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
 class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_Method_Cc
 {
     const URL_PXPOST = 'https://sec.paymentexpress.com/pxpost.aspx';
@@ -218,21 +218,23 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
     /**
      * create transaction object in xml and submit to server
      *
-     * @return bool
+     * @param Mage_Sales_Model_Order_Payment $payment
+     * @param boolean                        $enableAddBillCard
+     * @param boolean                        $rebill
+     *
+     * @return SimpleXMLElement $responseXml
      */
-    public function buildRequestAndSubmitToDps()
+    protected function getRequestToDpsResult($payment, $enableAddBillCard = false, $rebill = false)
     {
-
-        $payment = $this->getPayment();
-
         $client = new Zend_Http_Client();
         $client->setUri(self::URL_PXPOST);
         $client->setConfig(
             array(
-                 'maxredirects' => 0,
-                 'timeout'      => 30,
+                'maxredirects' => 0,
+                'timeout'      => 30,
             )
         );
+
         //Completing a previously authorized transaction
         //or refunding
         if ($this->getPaymentAction() == MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_COMPLETE
@@ -244,11 +246,14 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             $xml->addChild('Amount', trim(sprintf("%9.2f", $this->getAmount())));
             $xml->addChild('TxnType', $this->getPaymentAction());
             $xml->addChild('MerchantReference', $this->_getOrderId());
-            $origDpsTxnRef = Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef');
-            $xml->addChild('DpsTxnRef', $origDpsTxnRef);
-            $txnId = substr(uniqid(rand()), 0, 16);
-            $this->setTransactionId($txnId);
-            $xml->addChild('TxnId', $txnId);
+            $xml->addChild('DpsTxnRef', Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef'));
+            if ($rebill) {
+                $this->setTransactionId(Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef'));
+            } else {
+                $txnId = substr(uniqid(rand()), 0, 16);
+                $this->setTransactionId($txnId);
+                $xml->addChild('TxnId', $txnId);
+            }
         } else {
             //authorise or purchase
             $txnId = substr(uniqid(rand()), 0, 16);
@@ -262,14 +267,18 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             $xml->addChild('CardNumber', $payment->getCcNumber());
             //$xml->addChild('BillingId', '');
             $xml->addChild('Cvc2', htmlentities($payment->getCcCid()));
-            $xml->addChild('Cvc2Presence', '1');
+            $xml->addChild('Cvc2Presence', ($payment->getCcCid()) ? '1' : '0');
             $xml->addChild(
                 'DateExpiry',
                 str_pad($payment->getCcExpMonth(), 2, '0', STR_PAD_LEFT) . substr($payment->getCcExpYear(), 2, 2)
             );
-            //$xml->addChild('DpsBillingId', '');
+            if ($rebill) {
+                $xml->addChild('DpsBillingId', Mage::helper('foomandpspro')->getDpsBillingId($this->_code));
+            }
             //$xml->addChild('DpsTxnRef', '');
-            //$xml->addChild('EnableAddBillCard', '');
+            if ($enableAddBillCard) {
+                $xml->addChild('EnableAddBillCard', Mage::helper('foomandpspro')->getCcSaveFromPost());
+            }
             $xml->addChild('InputCurrency', $this->_getCurrencyCode());
             $xml->addChild('MerchantReference', $this->_getOrderId());
             $xml->addChild('PostUsername', htmlentities($this->getPostUsername($this->getStore())));
@@ -287,6 +296,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             //$xml->addChild('IssueNumber', '');
             //$xml->addChild('Track2', '');
         }
+        Mage::dispatchEvent('magebasedps_pxpost_xml_before', array('method_instance' => $this, 'xml' => $xml));
         $responseXml = $this->_requestResponse($client, $xml);
 
         //check if we have to send another Post to request the status of the transaction
@@ -298,6 +308,19 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             $xml->addChild('TxnId', $txnId);
             $responseXml = $this->_requestResponse($client, $xml);
         }
+        return $responseXml;
+    }
+
+    /**
+     * create transaction object in xml and submit to server
+     *
+     * @return bool
+     */
+    public function buildRequestAndSubmitToDps()
+    {
+        $payment = $this->getPayment();
+
+        $responseXml = $this->getRequestToDpsResult($payment);
 
         if ($responseXml && $this->_validateResponse($responseXml)) {
             $this->unsError();
@@ -420,7 +443,9 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
                 if ($this->getPaymentAction() != MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_COMPLETE
                     && $this->getPaymentAction() != MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_REFUND
                 ) {
-                    if (abs((float)$resultXml->Transaction[0]->Amount - sprintf("%9.2f", $order->getBaseGrandTotal())) > 0.0005) {
+                    if (abs((float)$resultXml->Transaction[0]->Amount - sprintf("%9.2f", $order->getBaseGrandTotal()))
+                        > 0.0005
+                    ) {
                         Mage::log("Error in DPS Response Validation: Mismatched totals", null, self::DPS_LOG_FILENAME);
                         return false;
                     }
@@ -485,7 +510,8 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             'ResponseText'   => (string)$responseXml->ResponseText,
             'HelpText'       => (string)$responseXml->HelpText,
             'AcquirerTxnRef' => (string)$responseXml->Transaction[0]->AcquirerTxnRef,
-            'Cvc2ResultCode' => (string)$responseXml->Transaction[0]->Cvc2ResultCode
+            'Cvc2ResultCode' => (string)$responseXml->Transaction[0]->Cvc2ResultCode,
+            'DateExpiry'     => (string)$responseXml->Transaction[0]->DateExpiry
         );
         Mage::helper('magebasedps')->setAdditionalData($payment, $data);
     }

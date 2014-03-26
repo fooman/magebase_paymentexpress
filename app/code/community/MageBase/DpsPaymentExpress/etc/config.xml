@@ -2,7 +2,7 @@
 <config>
     <modules>
         <MageBase_DpsPaymentExpress>
-            <version>1.5.10</version>
+            <version>1.5.11</version>
         </MageBase_DpsPaymentExpress>
     </modules>
     <global>
