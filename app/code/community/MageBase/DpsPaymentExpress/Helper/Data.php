@@ -27,28 +27,52 @@ class MageBase_DpsPaymentExpress_Helper_Data extends Mage_Core_Helper_Abstract
      * Currency codes supported by DPS
      *
      * @var array
+     * @see http://www.paymentexpress.com/Knowledge_Base/Merchant_Info/Multi_Currency
      */
     protected $_supportedCurrencies
         = array(
-            'CHF',
-            'EUR',
-            'FRF',
-            'GBP',
-            'HKD',
-            'JPY',
-            'NZD',
-            'SGD',
-            'USD',
-            'ZAR',
-            'AUD',
-            'WST',
-            'VUV',
-            'TOP',
-            'SBD',
-            'PNG',
-            'MYR',
-            'KWD',
-            'FJD'
+            'AUD', //Australian Dollar
+            'BRL', //Brazil Real
+            'BND', //Brunei Dollar
+            'CAD', //Canadian Dollar
+            'CNY', //Chinese Yuan Renminbi
+            'CZK', //Czech Korunaor
+            'DKK', //Danish Kroner
+            'EGP', //Egyptian Pound
+            'EUR', //Euros
+            'FJD', //Fiji Dollar
+            'HKD', //Hong Kong Dollar
+            'HUF', //Hungarian Forint
+            'INR', //Indian Rupee
+            'IDR', //Indonesia Rupiah
+            'JPY', //Japanese Yen
+            'KRW', //Korean Won
+            'MOP', //Macau Pataca
+            'MYR', //Malaysian Ringgit
+            'MUR', //Mauritius Rupee
+            'ANG', //Netherlands Guilder
+            'TWD', //New Taiwan Dollar
+            'NOK', //Norwegian Kronor
+            'NZD', //New Zealand Dollar
+            'PGK', //Papua New Guinea Kina
+            'PHP', //Philippine Peso
+            'PLN', //Polish Zloty
+            'GBP', //Pound Sterling
+            'PKR', //Pakistan Rupee
+            'WST', //Samoan Tala
+            'SAR', //Saudi Riyal
+            'SBD', //Solomon Islands Dollar
+            'LKR', //Sri Lankan Rupee
+            'SGD', //Singapore Dollar
+            'ZAR', //South African Rand
+            'SEK', //Swedish Kronor
+            'CHF', //Swiss Franc
+            'TWD', //Taiwan Dollar
+            'THB', //Thai Baht
+            'TOP', //Tongan Pa'anga
+            'AED', //UAE Dirham
+            'USD', //United States Dollar
+            'VUV' //Vanuatu Vatu
         );
 
     public function canUseCurrency($currencyCode)
