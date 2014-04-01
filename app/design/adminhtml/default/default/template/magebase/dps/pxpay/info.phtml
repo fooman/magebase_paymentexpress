@@ -32,7 +32,7 @@
 </table>
 <?php $maxmindData = $this->getMaxmindData() ?>
 <?php if($maxmindData) :?>
-<?php $isFraud = $maxmindData['Suspected Fraud'] == 'Yes' ?>
+<?php $isFraud = $maxmindData['Suspected Fraud'] == 'Fraud Suspected - Review Pending' || $maxmindData['Suspected Fraud'] == 'Fraud Suspected - Rejected' ?>
 <div class="entry-edit">
     <div style="<?php echo $isFraud?'background-color:red;':'background-color:green;' ?>" class="entry-edit-head collapseable <?php echo $isFraud?'open':'' ?>">
         <a onclick="$$('.magebasedps_maxmind_details').invoke('toggle');this.toggleClassName('open'); return false;" href="#" class=""><?php echo $this->__('Fraud Details')?></a>
