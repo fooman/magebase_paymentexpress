@@ -249,12 +249,10 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             $xml->addChild('DpsTxnRef', Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef'));
             if ($rebill) {
                 $xml->addChild('DpsBillingId', $rebill);
-                $this->setTransactionId(Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef'));
-            } else {
-                $txnId = substr(uniqid(rand()), 0, 16);
-                $this->setTransactionId($txnId);
-                $xml->addChild('TxnId', $txnId);
             }
+            $txnId = substr(uniqid(rand()), 0, 16);
+            $this->setTransactionId($txnId);
+            $xml->addChild('TxnId', $txnId);
         } else {
             //authorise or purchase
             $txnId = substr(uniqid(rand()), 0, 16);
