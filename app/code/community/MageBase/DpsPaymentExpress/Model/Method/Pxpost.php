@@ -248,6 +248,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             $xml->addChild('MerchantReference', $this->_getOrderId());
             $xml->addChild('DpsTxnRef', Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef'));
             if ($rebill) {
+                $xml->addChild('DpsBillingId', $rebill);
                 $this->setTransactionId(Mage::helper('magebasedps')->getAdditionalData($payment, 'DpsTxnRef'));
             } else {
                 $txnId = substr(uniqid(rand()), 0, 16);
@@ -273,11 +274,11 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
                 str_pad($payment->getCcExpMonth(), 2, '0', STR_PAD_LEFT) . substr($payment->getCcExpYear(), 2, 2)
             );
             if ($rebill) {
-                $xml->addChild('DpsBillingId', Mage::helper('foomandpspro')->getDpsBillingId($this->_code));
+                $xml->addChild('DpsBillingId', $rebill);
             }
             //$xml->addChild('DpsTxnRef', '');
             if ($enableAddBillCard) {
-                $xml->addChild('EnableAddBillCard', Mage::helper('foomandpspro')->getCcSaveFromPost());
+                $xml->addChild('EnableAddBillCard', $enableAddBillCard);
             }
             $xml->addChild('InputCurrency', $this->_getCurrencyCode());
             $xml->addChild('MerchantReference', $this->_getOrderId());
