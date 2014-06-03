@@ -2,7 +2,7 @@
 <config>
     <modules>
         <MageBase_DpsPaymentExpress>
-            <version>1.5.16</version>
+            <version>1.5.17</version>
         </MageBase_DpsPaymentExpress>
     </modules>
     <global>
@@ -127,6 +127,7 @@
                 <model>magebasedps/method_pxpay</model>
                 <pxpayuserid/>
                 <pxpaykey/>
+                <pxpayurl>https://sec.paymentexpress.com/pxpay/pxaccess.aspx</pxpayurl>
                 <payment_action>authorize_capture</payment_action>
                 <unpaid_order_status>pending_dps</unpaid_order_status>
                 <order_status>processing</order_status>

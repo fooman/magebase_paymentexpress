@@ -129,15 +129,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
                 ->setLastTransId($dpsTxnRef)
                 ->setTransactionId($dpsTxnRef);
         } else {
-            $error = $this->getError();
-            if (isset($error['message'])) {
-                $message = Mage::helper('magebasedps')->__('There has been an error processing your payment.')
-                    . ' ' . $error['message'];
-            } else {
-                $message = Mage::helper('magebasedps')->__(
-                    'There has been an error processing your payment. Please try later or contact us for help.'
-                );
-            }
+            $message = Mage::helper('magebasedps')->getErrorMessage($this->getError());
             Mage::throwException($message);
         }
         return $this;
@@ -176,15 +168,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
                 //$payment->registerCaptureNotification($amount);
             }
         } else {
-            $error = $this->getError();
-            if (isset($error['message'])) {
-                $message = Mage::helper('magebasedps')->__('There has been an error processing your payment.')
-                    . ' ' . $error['message'];
-            } else {
-                $message = Mage::helper('magebasedps')->__(
-                    'There has been an error processing your payment. Please try later or contact us for help.'
-                );
-            }
+            $message = Mage::helper('magebasedps')->getErrorMessage($this->getError());
             Mage::throwException($message);
         }
         return $this;
@@ -201,15 +185,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             $payment->setStatus(self::STATUS_APPROVED)
                 ->setLastTransId($dpsTxnRef);
         } else {
-            $error = $this->getError();
-            if (isset($error['message'])) {
-                $message = Mage::helper('magebasedps')->__('There has been an error processing your payment.')
-                    . $error['message'];
-            } else {
-                $message = Mage::helper('magebasedps')->__(
-                    'There has been an error processing your payment. Please try later or contact us for help.'
-                );
-            }
+            $message = Mage::helper('magebasedps')->getErrorMessage($this->getError());
             Mage::throwException($message);
         }
         return $this;
@@ -418,10 +394,12 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
                 }
                 if (!(int)$resultXml->Transaction[0]['success']) {
                     $common = Mage::getModel('magebasedps/method_common');
+                    $errExplained = false;
                     if (isset($resultXml->Transaction[0]['reco'])) {
+                        $errExplained = $common->returnErrorExplanation($resultXml->Transaction[0]['reco']);
                         Mage::log(
                             "Error in DPS Response Validation: " .
-                            $common->returnErrorExplanation($resultXml->Transaction[0]['reco']), null,
+                            $errExplained, null,
                             self::DPS_LOG_FILENAME
                         );
                     } else {
@@ -429,7 +407,9 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
                             "Error in DPS Response Validation: No reco code.", null, self::DPS_LOG_FILENAME
                         );
                     }
-                    if ($resultXml->HelpText) {
+                    if ($errExplained) {
+                        $this->setError(array('message' => $errExplained));
+                    } elseif ($resultXml->HelpText) {
                         $this->setError(array('message' => $resultXml->HelpText));
                     }
                     return false;

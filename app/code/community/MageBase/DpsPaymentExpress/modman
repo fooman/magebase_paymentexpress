@@ -1,0 +1,6 @@
+../../../../../app/code/community/MageBase/DpsPaymentExpress/                          /app/code/community/MageBase/DpsPaymentExpress/
+../../../../../app/design/adminhtml/default/default/template/magebase/dps/             /app/design/adminhtml/default/default/template/magebase/dps/
+../../../../../app/design/frontend/base/default/layout/magebase_dpspaymentexpress.xml  /app/design/frontend/base/default/layout/magebase_dpspaymentexpress.xml
+../../../../../app/design/frontend/base/default/template/magebase/dps/                 /app/design/frontend/base/default/template/magebase/dps/
+../../../../../app/etc/modules/MageBase_DpsPaymentExpress.xml                          /app/etc/modules/MageBase_DpsPaymentExpress.xml
+../../../../../skin/frontend/base/default/images/magebase/dps/                         /skin/frontend/base/default/images/magebase/dps/

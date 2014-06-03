@@ -149,4 +149,19 @@ class MageBase_DpsPaymentExpress_Helper_Data extends Mage_Core_Helper_Abstract
             }
         }
     }
+
+    public function getErrorMessage($error = array())
+    {
+        if (isset($error['message'])) {
+            $message = Mage::helper('magebasedps')->__(
+                'There has been an error processing your payment (%s). Please try again later or contact us for help.',
+                $error['message']
+            );
+        } else {
+            $message = Mage::helper('magebasedps')->__(
+                'There has been an error processing your payment. Please try later or contact us for help.'
+            );
+        }
+        return $message;
+    }
 }

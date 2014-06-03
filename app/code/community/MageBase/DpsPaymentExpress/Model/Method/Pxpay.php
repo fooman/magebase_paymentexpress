@@ -24,6 +24,8 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
 {
 
     const URL_PXPAY = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx';
+    const URL_PXPAY20 = 'https://sec.paymentexpress.com/pxaccess/pxpay.aspx';
+
     const URL_PXPAY_SUCCESS = 'magebasedps/pxpay/success';
     const URL_PXPAY_FAIL = 'magebasedps/pxpay/fail';
 
@@ -85,6 +87,17 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
             Mage::getStoreConfig('payment/' . $this->_code . '/pxpaykey', $this->getStore())
         );
     }
+
+    /**
+     * retrieve PxPay URL to post to from database
+     *
+     * @return string
+     */
+    protected function _getPxPayPostUrl()
+    {
+        return Mage::getStoreConfig('payment/' . $this->_code . '/pxpayurl', $this->getStore());
+    }
+
 
     /**
      * retrieve payment action from database
@@ -259,7 +272,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
         $paymentAction, $txnId, $billingId = '', $enableAddBillCard = '0', $txnDataThree = ''
     ) {
         $client = new Zend_Http_Client();
-        $client->setUri(self::URL_PXPAY);
+        $client->setUri(self::_getPxPayPostUrl());
         $client->setConfig(
             array(
                 'maxredirects' => 0,
@@ -334,7 +347,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
     {
         try {
             $client = new Zend_Http_Client();
-            $client->setUri(self::URL_PXPAY);
+            $client->setUri(self::_getPxPayPostUrl());
             $client->setConfig(
                 array(
                     'maxredirects' => 0,
@@ -588,9 +601,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
         }
         if ($order && $order->getId() && $order->getState() != Mage_Sales_Model_Order::STATE_CANCELED) {
             $order->registerCancellation(
-                Mage::helper('magebasedps')->__(
-                    'There has been an error processing your payment. Please try later or contact us for help.'
-                ), false
+                Mage::helper('magebasedps')->getErrorMessage(), false
             )->save();
         }
     }

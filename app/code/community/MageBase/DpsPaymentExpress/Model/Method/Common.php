@@ -66,6 +66,8 @@ class MageBase_DpsPaymentExpress_Model_Method_Common extends Mage_Payment_Model_
      */
     public $errorCodes
         = array(
+            '51' => 'Card with Insufficient Funds',
+            '54' => 'Expired Card',
             'IC' => 'Invalid Key or Username. Also check that if a TxnId is being supplied that it is unique.',
             'ID' => 'Invalid transaction type. Esure that the transaction type is either Auth or Purchase.',
             'IK' => 'Invalid UrlSuccess. Ensure that the URL being supplied does not contain a query string.',
@@ -86,6 +88,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Common extends Mage_Payment_Model_
             'NQ' => 'User not enabled for PxPay. Contact DPS.',
             'NT' => 'Key is not 64 characters.',
             'U5' => 'Invalid User / Password',
+            'U9' => 'Timeout for Transaction',
             'QD' => 'The transaction was Declined.', //Invalid TxnRef
             'Q4' => 'Invalid Amount Entered. Transaction has not been Approved',
             'Q8' => 'Invalid Currency',
@@ -101,7 +104,6 @@ class MageBase_DpsPaymentExpress_Model_Method_Common extends Mage_Payment_Model_
             'D3' => 'Invalid / missing Password',
             'D4' => 'Maximum number of logon attempts exceeded'
         );
-
 
     public function returnErrorExplanation($code)
     {
