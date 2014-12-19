@@ -2,7 +2,7 @@
 <config>
     <modules>
         <MageBase_DpsPaymentExpress>
-            <version>1.5.18</version>
+            <version>1.5.19</version>
         </MageBase_DpsPaymentExpress>
     </modules>
     <global>
@@ -143,4 +143,11 @@
             </magebasedpspxpay>
         </payment>
     </default>
+    <phpunit>
+        <suite>
+            <modules>
+                <MageBase_DpsPaymentExpress/>
+            </modules>
+        </suite>
+    </phpunit>
 </config>

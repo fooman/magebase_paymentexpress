@@ -284,9 +284,9 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
         $xml = new SimpleXMLElement('<GenerateRequest></GenerateRequest>');
         $xml->addChild('PxPayUserId', htmlentities($this->_getPxPayUserId()));
         $xml->addChild('PxPayKey', htmlentities($this->_getPxPayKey()));
-        $xml->addChild('AmountInput', trim(htmlentities(sprintf("%9.2f", $quote->getBaseGrandTotal()))));
+        $xml->addChild('AmountInput', trim(htmlentities(sprintf("%9.2f", $this->_getAmount()))));
         $xml->addChild('BillingId', $billingId);
-        $xml->addChild('CurrencyInput', htmlentities($quote->getBaseCurrencyCode()));
+        $xml->addChild('CurrencyInput', htmlentities($this->_getCurrencyCode()));
         $xml->addChild('EmailAddress', htmlentities($quote->getCustomerEmail()));
         $xml->addChild('EnableAddBillCard', $enableAddBillCard);
         $xml->addChild('MerchantReference', htmlentities($this->_getOrderId()));
@@ -394,10 +394,11 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
      *         order exists
      *
      * @param SimpleXMLElement $resultXml
+     * @param bool $currencySwitch
      *
      * @return int
      */
-    protected function _validateResponse($resultXml)
+    protected function _validateResponse($resultXml, $currencySwitch = false)
     {
         try {
             if ((int)$resultXml->Success != 1) {
@@ -409,7 +410,15 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
                 Mage::log("Error in DPS Response Validation: No Order", null, self::DPS_LOG_FILENAME);
                 return MageBase_DpsPaymentExpress_Model_Method_Common::STATUS_ERROR;
             }
-            if (abs((float)$resultXml->AmountSettlement - sprintf("%9.2f", $order->getBaseGrandTotal())) > 0.05) {
+            /*
+             * New feature for PxPaytPro. Here we allow usage of multiple currencies.
+             * Checking appropriate totals
+             */
+            $totals = $order->getBaseGrandTotal();
+            if($currencySwitch) {
+                $totals = $order->getGrandTotal();
+            }
+            if (abs((float)$resultXml->AmountSettlement - sprintf("%9.2f", $totals)) > 0.05) {
                 Mage::log(
                     $order->getIncrementId() . " Error in DPS Response Validation: Mismatched totals",
                     null,
@@ -417,7 +426,15 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
                 );
                 return MageBase_DpsPaymentExpress_Model_Method_Common::STATUS_ERROR;
             }
-            if ((string)$resultXml->CurrencySettlement != $order->getBaseCurrencyCode()) {
+            /*
+             * New feature for PxPayPro. Here we allow usage of multiple currencies.
+             * Checking appropriate currency codes
+             */
+            $currencyCode = $order->getBaseCurrencyCode();
+            if($currencySwitch) {
+                $currencyCode = $order->getOrderCurrencyCode();
+            }
+            if ((string)$resultXml->CurrencySettlement != $currencyCode) {
                 Mage::log(
                     $order->getIncrementId() . " Error in DPS Response Validation: Mismatched currencies",
                     null,
@@ -663,4 +680,34 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
         return $this->_canUseCheckout;
     }
 
+    /**
+     * Grand total getter
+     *
+     * @return string
+     */
+    protected function _getAmount()
+    {
+        $info = $this->getInfoInstance();
+        if ($this->_isPlaceOrder()) {
+            return (double)$info->getOrder()->getQuoteBaseGrandTotal();
+        } else {
+            return (double)$info->getQuote()->getBaseGrandTotal();
+        }
+    }
+
+    /**
+     * Currency code getter
+     *
+     * @return string
+     */
+    protected function _getCurrencyCode()
+    {
+        $info = $this->getInfoInstance();
+
+        if ($this->_isPlaceOrder()) {
+            return $info->getOrder()->getBaseCurrencyCode();
+        } else {
+            return $info->getQuote()->getBaseCurrencyCode();
+        }
+    }
 }

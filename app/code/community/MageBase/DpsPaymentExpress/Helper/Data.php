@@ -31,53 +31,53 @@ class MageBase_DpsPaymentExpress_Helper_Data extends Mage_Core_Helper_Abstract
      */
     protected $_supportedCurrencies
         = array(
-            'AUD', //Australian Dollar
-            'BRL', //Brazil Real
-            'BND', //Brunei Dollar
-            'CAD', //Canadian Dollar
-            'CNY', //Chinese Yuan Renminbi
-            'CZK', //Czech Korunaor
-            'DKK', //Danish Kroner
-            'EGP', //Egyptian Pound
-            'EUR', //Euros
-            'FJD', //Fiji Dollar
-            'HKD', //Hong Kong Dollar
-            'HUF', //Hungarian Forint
-            'INR', //Indian Rupee
-            'IDR', //Indonesia Rupiah
-            'JPY', //Japanese Yen
-            'KRW', //Korean Won
-            'MOP', //Macau Pataca
-            'MYR', //Malaysian Ringgit
-            'MUR', //Mauritius Rupee
-            'ANG', //Netherlands Guilder
-            'TWD', //New Taiwan Dollar
-            'NOK', //Norwegian Kronor
-            'NZD', //New Zealand Dollar
-            'PGK', //Papua New Guinea Kina
-            'PHP', //Philippine Peso
-            'PLN', //Polish Zloty
-            'GBP', //Pound Sterling
-            'PKR', //Pakistan Rupee
-            'WST', //Samoan Tala
-            'SAR', //Saudi Riyal
-            'SBD', //Solomon Islands Dollar
-            'LKR', //Sri Lankan Rupee
-            'SGD', //Singapore Dollar
-            'ZAR', //South African Rand
-            'SEK', //Swedish Kronor
-            'CHF', //Swiss Franc
-            'TWD', //Taiwan Dollar
-            'THB', //Thai Baht
-            'TOP', //Tongan Pa'anga
-            'AED', //UAE Dirham
-            'USD', //United States Dollar
-            'VUV' //Vanuatu Vatu
+            'AUD' => 'Australian Dollar',
+            'BRL' => 'Brazil Real',
+            'BND' => 'Brunei Dollar',
+            'CAD' => 'Canadian Dollar',
+            'CNY' => 'Chinese Yuan Renminbi',
+            'CZK' => 'Czech Korunaor',
+            'DKK' => 'Danish Kroner',
+            'EGP' => 'Egyptian Pound',
+            'EUR' => 'Euro',
+            'FJD' => 'Fiji Dollar',
+            'HKD' => 'Hong Kong Dollar',
+            'HUF' => 'Hungarian Forint',
+            'INR' => 'Indian Rupee',
+            'IDR' => 'Indonesia Rupiah',
+            'JPY' => 'Japanese Yen',
+            'KRW' => 'Korean Won',
+            'MOP' => 'Macau Pataca',
+            'MYR' => 'Malaysian Ringgit',
+            'MUR' => 'Mauritius Rupee',
+            'ANG' => 'Netherlands Guilder',
+            'TWD' => 'New Taiwan Dollar',
+            'NOK' => 'Norwegian Kronor',
+            'NZD' => 'New Zealand Dollar',
+            'PGK' => 'Papua New Guinea Kina',
+            'PHP' => 'Philippine Peso',
+            'PLN' => 'Polish Zloty',
+            'GBP' => 'Pound Sterling',
+            'PKR' => 'Pakistan Rupee',
+            'WST' => 'Samoan Tala',
+            'SAR' => 'Saudi Riyal',
+            'SBD' => 'Solomon Islands Dollar',
+            'LKR' => 'Sri Lankan Rupee',
+            'SGD' => 'Singapore Dollar',
+            'ZAR' => 'South African Rand',
+            'SEK' => 'Swedish Kronor',
+            'CHF' => 'Swiss Franc',
+            'TWD' => 'Taiwan Dollar',
+            'THB' => 'Thai Baht',
+            'TOP' => 'Tongan Pa\'anga',
+            'AED' => 'UAE Dirham',
+            'USD' => 'United States Dollar',
+            'VUV' => 'Vanuatu Vatu'
         );
 
     public function canUseCurrency($currencyCode)
     {
-        return in_array($currencyCode, $this->_supportedCurrencies);
+        return in_array($currencyCode, array_keys($this->_supportedCurrencies));
     }
 
     public function getAdditionalData($info, $key = null)
@@ -150,18 +150,9 @@ class MageBase_DpsPaymentExpress_Helper_Data extends Mage_Core_Helper_Abstract
         }
     }
 
-    public function getErrorMessage($error = array())
+    public function getSupportedCurrencies()
     {
-        if (isset($error['message'])) {
-            $message = Mage::helper('magebasedps')->__(
-                'There has been an error processing your payment (%s). Please try again later or contact us for help.',
-                $error['message']
-            );
-        } else {
-            $message = Mage::helper('magebasedps')->__(
-                'There has been an error processing your payment. Please try later or contact us for help.'
-            );
-        }
-        return $message;
+        asort($this->_supportedCurrencies);
+        return $this->_supportedCurrencies;
     }
 }

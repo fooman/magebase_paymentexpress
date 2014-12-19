@@ -358,10 +358,11 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
      *         order exists
      *
      * @param SimpleXMLElement $resultXml
+     * @param bool $currencySwitch
      *
      * @return bool
      */
-    protected function _validateResponse($resultXml)
+    protected function _validateResponse($resultXml, $currencySwitch = false)
     {
         try {
             if ($resultXml) {
@@ -419,17 +420,34 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
                     Mage::log("Error in DPS Response Validation: No Order", null, self::DPS_LOG_FILENAME);
                     return false;
                 }
+                /*
+                 * New feature for PxPostPro. Here we allow usage of multiple currencies.
+                 * Checking appropriate totals
+                 */
+                $totals = $order->getBaseGrandTotal();
+                if($currencySwitch) {
+                    $totals = $order->getGrandTotal();
+                }
                 if ($this->getPaymentAction() != MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_COMPLETE
                     && $this->getPaymentAction() != MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_REFUND
+                    && $this->getPaymentAction() != MageBase_DpsPaymentExpress_Model_Method_Common::ACTION_VALIDATE
                 ) {
-                    if (abs((float)$resultXml->Transaction[0]->Amount - sprintf("%9.2f", $order->getBaseGrandTotal()))
+                    if (abs((float)$resultXml->Transaction[0]->Amount - sprintf("%9.2f", $totals))
                         > 0.0005
                     ) {
                         Mage::log("Error in DPS Response Validation: Mismatched totals", null, self::DPS_LOG_FILENAME);
                         return false;
                     }
                 }
-                if ((float)$resultXml->Transaction[0]->CurrencySettlement != $order->getBaseCurrencyCode()) {
+                /*
+                 * New feature for PxPostPro. Here we allow usage of multiple currencies.
+                 * Checking appropriate currency codes
+                 */
+                $currencyCode = $order->getBaseCurrencyCode();
+                if($currencySwitch) {
+                    $currencyCode = $order->getOrderCurrencyCode();
+                }
+                if ((float)$resultXml->Transaction[0]->CurrencySettlement != $currencyCode) {
                     Mage::log("Error in DPS Response Validation: Mismatched currencies", null, self::DPS_LOG_FILENAME);
                     return false;
                 }
