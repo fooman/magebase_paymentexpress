@@ -617,9 +617,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
             $order = Mage::getModel('sales/order')->load(Mage::getSingleton('checkout/session')->getLastOrderId());
         }
         if ($order && $order->getId() && $order->getState() != Mage_Sales_Model_Order::STATE_CANCELED) {
-            $order->registerCancellation(
-                Mage::helper('magebasedps')->getErrorMessage(), false
-            )->save();
+            $order->cancel()->save();
         }
     }
 
