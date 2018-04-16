@@ -1,4 +1,5 @@
 <?php
+
 class MageBase_DpsPaymentExpress_Model_Observer
 {
     public function allowDpsNotifications($observer)
@@ -19,6 +20,21 @@ class MageBase_DpsPaymentExpress_Model_Observer
             $prototype->loadFile($file);
             $config->extend($prototype);
             $config->saveCache();
+        }
+    }
+
+    public function resetTransactionDetails($observer)
+    {
+        $order = $observer->getEvent()->getOrder();
+        if (Mage::getSingleton('adminhtml/session_quote')->getReordered()
+            && $order->getPayment()->getMethod() == 'magebasedpspxpay'
+        ) {
+            $payment = $order->getPayment();
+            $payment->setCcExpMonth('');
+            $payment->setCcExpYear('');
+            $payment->resetTransactionAdditionalInfo();
+            $payment->setAdditionalData(array());
+            $payment->setAdditionalInformation(array());
         }
     }
 }

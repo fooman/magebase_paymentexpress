@@ -25,6 +25,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
 
     const URL_PXPAY = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx';
     const URL_PXPAY20 = 'https://sec.paymentexpress.com/pxaccess/pxpay.aspx';
+    const URL_PXPAY20_UAT = 'https://uat.paymentexpress.com/pxaccess/pxpay.aspx';
 
     const URL_PXPAY_SUCCESS = 'magebasedps/pxpay/success';
     const URL_PXPAY_FAIL = 'magebasedps/pxpay/fail';
@@ -277,6 +278,8 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
             array(
                 'maxredirects' => 0,
                 'timeout'      => 30,
+                'adapter'      => 'Zend_Http_Client_Adapter_Socket',
+                'ssltransport' => 'tlsv1.2'
             )
         );
         $quote = $this->getInfoInstance()->getQuote();
@@ -352,6 +355,8 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
                 array(
                     'maxredirects' => 0,
                     'timeout'      => 30,
+                    'adapter'      => 'Zend_Http_Client_Adapter_Socket',
+                    'ssltransport' => 'tlsv1.2'
                 )
             );
             $xml = new SimpleXMLElement('<ProcessResponse></ProcessResponse>');
@@ -394,7 +399,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
      *         order exists
      *
      * @param SimpleXMLElement $resultXml
-     * @param bool $currencySwitch
+     * @param bool             $currencySwitch
      *
      * @return int
      */
@@ -411,11 +416,11 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
                 return MageBase_DpsPaymentExpress_Model_Method_Common::STATUS_ERROR;
             }
             /*
-             * New feature for PxPaytPro. Here we allow usage of multiple currencies.
+             * New feature for PxPayPro. Here we allow usage of multiple currencies.
              * Checking appropriate totals
              */
             $totals = $order->getBaseGrandTotal();
-            if($currencySwitch) {
+            if ($currencySwitch) {
                 $totals = $order->getGrandTotal();
             }
             if (abs((float)$resultXml->AmountSettlement - sprintf("%9.2f", $totals)) > 0.05) {
@@ -431,7 +436,7 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpay extends Mage_Payment_Model_M
              * Checking appropriate currency codes
              */
             $currencyCode = $order->getBaseCurrencyCode();
-            if($currencySwitch) {
+            if ($currencySwitch) {
                 $currencyCode = $order->getOrderCurrencyCode();
             }
             if ((string)$resultXml->CurrencySettlement != $currencyCode) {

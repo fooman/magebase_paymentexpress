@@ -208,6 +208,8 @@ class MageBase_DpsPaymentExpress_Model_Method_Pxpost extends Mage_Payment_Model_
             array(
                 'maxredirects' => 0,
                 'timeout'      => 30,
+                'adapter'      => 'Zend_Http_Client_Adapter_Socket',
+                'ssltransport' => 'tlsv1.2'
             )
         );
 

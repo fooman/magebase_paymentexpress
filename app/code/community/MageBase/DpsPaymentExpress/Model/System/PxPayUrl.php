@@ -33,6 +33,10 @@ class MageBase_DpsPaymentExpress_Model_System_PxPayUrl
                 'value' => MageBase_DpsPaymentExpress_Model_Method_Pxpay::URL_PXPAY20,
                 'label' => Mage::helper('magebasedps')->__('PxPay 2.0')
             ),
+            array(
+                'value' => MageBase_DpsPaymentExpress_Model_Method_Pxpay::URL_PXPAY20_UAT,
+                'label' => Mage::helper('magebasedps')->__('PxPay 2.0 - UAT (Testing Only)')
+            ),           
         );
     }
 }

@@ -2,7 +2,7 @@
 <config>
     <modules>
         <MageBase_DpsPaymentExpress>
-            <version>1.5.21</version>
+            <version>1.5.22</version>
         </MageBase_DpsPaymentExpress>
     </modules>
     <global>
@@ -102,6 +102,18 @@
             </updates>
         </layout>
     </frontend>
+    <adminhtml>
+        <events>
+            <sales_model_service_quote_submit_before>
+                <observers>
+                    <magebasedps_resetTransactionDetails>
+                        <class>MageBase_DpsPaymentExpress_Model_Observer</class>
+                        <method>resetTransactionDetails</method>
+                    </magebasedps_resetTransactionDetails>
+                </observers>
+            </sales_model_service_quote_submit_before>
+        </events>
+    </adminhtml>
     <default>
         <payment>
             <magebasedpspxpost>
